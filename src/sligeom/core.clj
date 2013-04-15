@@ -6,3 +6,5 @@
 (set! *unchecked-math* true)
 
 (load "transform")
+(load "shape")
+(load "intersection")
