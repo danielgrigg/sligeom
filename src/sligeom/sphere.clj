@@ -15,7 +15,7 @@
 (deftype Sphere [^double radius]
   RayIntersection
   (intersect [this r]
-    (intersect-sphere-ray radius))
+    (intersect-sphere-ray radius r))
   Object
   (toString [this] (str radius)))
 
