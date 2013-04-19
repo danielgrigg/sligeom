@@ -12,13 +12,11 @@
     (if (and (> det eps) (>= u 0.0) (<= u det) (>= v 0.0) (<= (+ u v) det))
       (v3divs [(v3dot e2 qvec) u v] det))))
 
-(deftype Triangle [p0 p1 p2]
+(defrecord Triangle [p0 p1 p2]
   RayIntersection
   (intersect [this r]
     (if-let [^Ray _r r]
-      (intersect-triangle-ray p0 p1 p2 _r)))
-  Object
-  (toString [this] (str p0 " " p1 " " p2)))
+      (intersect-triangle-ray p0 p1 p2 _r))))
 
 (defn triangle [p0 p1 p2]
   (Triangle. p0 p1 p2))

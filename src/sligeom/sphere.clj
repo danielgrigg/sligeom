@@ -12,12 +12,10 @@
             (if (> (.maxt r) t1) t1)
             t0))))))
 
-(deftype Sphere [^double radius]
+(defrecord Sphere [^double radius]
   RayIntersection
   (intersect [this r]
-    (intersect-sphere-ray radius r))
-  Object
-  (toString [this] (str radius)))
+    (intersect-sphere-ray radius r)))
 
 (defn sphere [^double r] (Sphere. r))
 

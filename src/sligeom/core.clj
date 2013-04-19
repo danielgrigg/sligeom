@@ -14,7 +14,7 @@
 (defprotocol Bounded
   (bounding-box [this] "Compute the AABB"))
 
-(deftype Intersection [point normal])
+(defrecord Intersection [point normal])
     
 (definterface Bounding
   (^double width [])

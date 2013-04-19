@@ -1,4 +1,4 @@
-(defproject sligeom "0.1.3"
+(defproject sligeom "0.1.4"
   :description "Geometric functions"
   :url "http://sliplanesoftware.com"
   :license {:name "Eclipse Public License"

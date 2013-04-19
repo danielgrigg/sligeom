@@ -1,6 +1,6 @@
 (in-ns 'sligeom.core)
 
-(deftype Plane [position normal]
+(defrecord Plane [position normal]
   RayIntersection
   (intersect [this _r]
     (let [^Ray r _r
@@ -12,9 +12,7 @@
   Bounded
   (bounding-box [this]
     ;; Bounding-box for an infinite plane...
-    (bbox))
-  Object 
-  (toString [this] (str position " " normal)))
+    (bbox)))
 
 (defn plane [position normal] (Plane. position normal))
 

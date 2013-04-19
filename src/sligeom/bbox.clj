@@ -1,7 +1,7 @@
 (in-ns 'sligeom.core)
 
 ; "An axis-aligned bounding box"
-(deftype BBox [minp maxp]
+(defrecord BBox [minp maxp]
   Bounding
   (width [this] (- (maxp 0) (minp 0)))
   (height [ this] (- (maxp 1) (minp 1)))
@@ -9,11 +9,7 @@
 
   Bounded
   (bounding-box [this]
-    this)
-    
-  Object
-  (toString [this]
-    (str minp " " maxp)))
+    this))
 
 (defn bbox "Construct a BBox"
   ([] 

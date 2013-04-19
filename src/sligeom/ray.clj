@@ -1,29 +1,21 @@
 (in-ns 'sligeom.core)
 
-(deftype Ray [origin direction ^double mint ^double maxt]
+(defrecord Ray [origin direction ^double mint ^double maxt]
   Transformable
   (transform [this T]
-    (Ray. (transform-point (.origin this) T)
-          (transform-vector (.direction this) T)
+    (Ray. (transform-point (:origin this) T)
+          (transform-vector (:direction this) T)
           mint
-          maxt))
+          maxt)))
             
-  Object
-  (toString [this]
-    (apply str
-           (.origin this) " "
-           (.direction this) " "
-           (.mint this) " " 
-           (.maxt this) " ")))
-
 (defn ray-at [^Ray r ^double t]
-  (v4add (.origin r) (v4muls (.direction r) t)))
+  (v4add (:origin r) (v4muls (:direction r) t)))
 
 (defn ray-interval "Confine the ray r to an interval"
   ([^Ray r ^double mint ^double maxt]
-     (Ray. (.origin r) (.direction r) mint maxt))
+     (Ray. (:origin r) (:direction r) mint maxt))
   ([^Ray r ^double maxt]
-     (Ray. (.origin r) (.direction r) (.mint r) maxt)))
+     (Ray. (:origin r) (:direction r) (:mint r) maxt)))
 
 (defn ^Ray ray
   ([[ox oy oz ow :as origin] [dx dy dz dw :as direction]]
