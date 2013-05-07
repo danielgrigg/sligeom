@@ -1,4 +1,8 @@
-(in-ns 'sligeom.core)
+(ns sligeom.transform
+    (:use slimath.core))
+
+(defprotocol Transformable
+  (transform [this T] "Transform the object by T"))
 
 (deftype Transform [transform inverse]
   Object
