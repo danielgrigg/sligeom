@@ -19,8 +19,18 @@
 (defn ^Transform ident "Identity transformation" []
   (matrix (m4identity)))
 
-(defmacro compose "Compose a sequence of transforms" [& xs]
-  `(matrix (m4mul ~@(for [x xs] `(.transform ~x)))))
+(defn ^Transform compose   
+  "Compose a sequence of transforms"
+  ([^Transform m] m)
+  ([^Transform m1 ^Transform m2]
+     (Transform. (m4mul (.transform m1) (.transform m2))
+                (m4mul (.inverse m2) (.inverse m1))))
+  ([^Transform x ^Transform y & xs] 
+     (loop [m (m4mul (.transform x) (.transform y)) ms xs]
+       (if-not (seq ms)
+         (matrix m)
+         (let [^Transform m2 (.transform (first ms))]
+           (recur (m4mul m m2) (rest ms)))))))
 
 (defn ^Transform translate "Translation" [^double tx ^double ty ^double tz]
   (Transform. (matrix4 1. 0. 0. tx
@@ -81,7 +91,7 @@
 
 (defn ^Transform perspective 
   "Perspective transform"
-  [{:keys [fov-rads aspect near far]}]
+  [& {:keys [fov-rads aspect near far]}]
   (let [t (* near (Math/tan (* fov-rads 0.5)))
         b (- t)
         l (* b aspect)
