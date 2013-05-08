@@ -11,8 +11,8 @@
 (defrecord Ray [origin direction ^double mint ^double maxt]
   Transformable
   (transform [this T]
-    (Ray. (transform-point (:origin this) T)
-          (transform-vector (:direction this) T)
+    (Ray. (transform-point T (:origin this))
+          (transform-vector T (:direction this))
           mint
           maxt)))
             
@@ -67,7 +67,7 @@
 
   Transformable
   (transform-object [this T]
-    (bbox (transform-point (.minp this) T) (transform-point (.maxp this) T))))
+    (bbox (transform-point T (.minp this)) (transform-point T (.maxp this)))))
 
 
 (defn intersect-sphere-ray [^double radius ^Ray r]
