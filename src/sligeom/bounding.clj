@@ -1,6 +1,6 @@
 (ns sligeom.bounding
-  (:use slimath.core)
-  (:use (sligeom core)))
+  (:use [slimath core]
+        [sligeom core]))
 
 (defprotocol Bounded
   (bounding-box [this] "Compute the AABB"))

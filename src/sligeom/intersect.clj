@@ -1,9 +1,9 @@
 (ns sligeom.intersect
-  (:use slimath.core)
-  (:use (sligeom core transform bounding))
-  (:require [clojure.math.numeric-tower :as numeric])
-  (:import sligeom.transform.Transform
-           sligeom.bounding.BBox))
+  (:use [slimath core]
+        [sligeom core transform bounding]
+        [clojure.math.numeric-tower :only [abs]])
+  (:import [sligeom.transform Transform]
+           [sligeom.bounding BBox]))
 
 (defprotocol RayIntersection
   ( intersect [this r] "Distance to intersection"))
@@ -40,7 +40,7 @@
         slab-intersect (fn [^long i ^double t-min ^double t-max]
                          (let [f ((.direction r) i)
                                e (ea i)]
-                           (if (> (numeric/abs f) eps-small)
+                           (if (> (abs f) eps-small)
                              (let [e1 (+ e (.width B))
                                    t1' (/ e1 f)
                                    t2' (/ e f)
@@ -95,7 +95,7 @@
   (intersect [this _r]
     (let [^Ray r _r
           rdotn (v3dot (.direction r) normal)]
-      (if (> (numeric/abs rdotn) eps-small)
+      (if (> (abs rdotn) eps-small)
         (let [t (/ (v3dot (v3sub position (.origin r)) normal) rdotn)]
           (if (> (.maxt r) t (.mint r)) t)))))
 

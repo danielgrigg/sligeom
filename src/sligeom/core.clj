@@ -1,6 +1,5 @@
 (ns sligeom.core
-  (:use slimath.core)
-  (:require [clojure.math.numeric-tower :as numeric]))
+  (:use slimath.core))
 
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
