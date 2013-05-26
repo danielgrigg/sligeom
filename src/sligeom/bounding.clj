@@ -3,7 +3,8 @@
         [sligeom core]))
 
 (defprotocol Bounded
-  (bounding-box [this] "Compute the AABB"))
+  (bounding-box [this] "Compute the AABB")
+  (contains-point? [this [^double px ^double py ^double pz :as p]]))
 
 (definterface Bounding
   (^double width [])
@@ -19,7 +20,12 @@
 
   Bounded
   (bounding-box [this]
-    this))
+    this)
+  (contains-point? [this [^double px ^double py ^double pz :as p]]
+      (let [[x0 y0 z0] (:minp this)
+            [x1 y1 z1] (:maxp this)]       
+        (not (or (< px x0) (< py y0) (< pz z0)
+                 (> px x1) (> py y1) (> pz z1))))))
 
 (defn bbox "Construct a BBox"
   ([] 
@@ -36,4 +42,3 @@
 
 (defn bbox-union "union of bbox with point" [^BBox b [^double x ^double y ^double z :as p]]
   (BBox. (v4min (.minp b) p) (v4max (.maxp b) p)))
-

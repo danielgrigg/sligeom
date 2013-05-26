@@ -21,3 +21,14 @@
       (bbox-union (bbox (point3 2 3 5) (point3 7 13 9))
                   (point3 35 -21 23))
       => (bbox (point3 2 -21 5) (point3 35 13 23)))
+
+(fact "`contains-point?` bbox contains a point p"
+      (contains-point? (bbox (point3 2 3 5) (point3 7 13 9)) (point3 5 8 9))
+      => true
+      (contains-point? (bbox (point3 2 3 5) (point3 7 13 9)) (point3 7.5 8 8))
+      => false
+      (contains-point? (bbox (point3 2 3 5) (point3 7 13 9)) (point3 2 13.4 8))
+      => false
+      (contains-point? (bbox (point3 2 3 5) (point3 7 13 9)) (point3 2 13 9.2))
+      => false
+)

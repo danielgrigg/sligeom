@@ -108,7 +108,6 @@
  [position normal] 
  (Plane. position normal))
 
-
 (defn intersect-triangle-ray 
   "Ray-triangle intersection"
   [p0 p1 p2 ^Ray r]
