@@ -2,7 +2,7 @@
   (:use [slimath core]
         [sligeom core transform bounding intersect])
   (:import [sligeom.transform Transform]
-           [sligeom.bounding BBox]
+           [sligeom.bounding BBox Bounding]
            [sligeom.intersect Ray]))
 
 (set! *warn-on-reflection* true)
@@ -10,7 +10,24 @@
 
 (defrecord Grid3 [^BBox bounds divisions])
 
-(defn- sign-step [x] (if (pos? x) 1 -1))
+(defn divisions-for 
+  "compute a heuristically optimal divisions for a bounding box for nprims primitives"
+  [^long nprims ^BBox bounds]
+  (let [longest-nvoxels (* 3.0 (Math/pow nprims (/ 3.0)))
+        nvoxels-per-unit (/ longest-nvoxels (longest bounds))]
+    [(* nvoxels-per-unit (.width bounds))
+     (* nvoxels-per-unit (.height bounds))
+     (* nvoxels-per-unit (.depth bounds))]))
+
+(defn clamp-divisions [[dx dy dz :as d]]
+  [(int (clamp dx 1 64)) 
+   (int (clamp dy 1 64))
+   (int (clamp dz 1 64))])
+
+(defn grid3 [^BBox bounds ^long nprims]
+  (->Grid3 bounds (-> nprims
+                      (divisions-for bounds)
+                      clamp-divisions)))
 
 (defn voxel-size [^Grid3 g]
   (v3div (bbox-size (:bounds g)) (:divisions g)))
@@ -25,9 +42,18 @@
   (v3add (:minp (:bounds g))
          (v3mul v (voxel-size g))))
 
-(defn- zero-min [^double x]
-  (if (> (Math/abs x) eps-small) x eps-small))
-
+(defn- clamp-vector
+  [[^double x ^double y ^double z]]
+     [(if (> (Math/abs x) eps-small) x eps-small)
+      (if (> (Math/abs y) eps-small) y eps-small)
+      (if (> (Math/abs z) eps-small) z eps-small)
+      0.0])
+ 
+(defn- sign-vector [[^double x ^double y ^double z]] 
+  [(if (pos? x) 1 -1)
+   (if (pos? y) 1 -1)
+   (if (pos? z) 1 -1)])
+     
 (defn- entry-point [^Grid3 g ^Ray r]
   (if (contains-point? (:bounds g) (:origin r)) 
     0.0
@@ -36,9 +62,9 @@
 (defn grid3-seq [^Grid3 g ^Ray r]
   (if-let [enter-t (entry-point g r)]
     (let [o (ray-at r enter-t)
-          d (vec (map zero-min (:direction r)))
+          d (clamp-vector (:direction r))
           [nx ny nz] (:divisions g)
-          [sx sy sz :as s] (vec (map sign-step (:direction r)))
+          [sx sy sz :as s] (sign-vector (:direction r))
           v0 (v3min (point-to-voxel g o)
                     (v3sub (:divisions g) [1 1 1]))
           v1 (v3add v0 (v3max s [0 0 0]))

@@ -42,3 +42,6 @@
 
 (defn bbox-union "union of bbox with point" [^BBox b [^double x ^double y ^double z :as p]]
   (BBox. (v4min (.minp b) p) (v4max (.maxp b) p)))
+
+(defn longest [^BBox b]
+  (max (.width b) (.height b) (.depth b)))
