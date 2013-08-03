@@ -1,5 +1,5 @@
 (ns sligeom.transform
-    (:use slimath.core))
+    (:use [slimath core vec matrix]))
 
 (defprotocol Transformable
   (transform [this T] "Transform the object by T"))

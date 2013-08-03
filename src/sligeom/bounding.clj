@@ -1,5 +1,5 @@
 (ns sligeom.bounding
-  (:use [slimath core]
+  (:use [slimath core vec matrix]
         [sligeom core]))
 
 (defprotocol Bounded

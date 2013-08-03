@@ -1,5 +1,5 @@
 (ns sligeom.aggregate
-  (:use [slimath core]
+  (:use [slimath core vec matrix]
         [sligeom core transform bounding intersect])
   (:import [sligeom.transform Transform]
            [sligeom.bounding BBox Bounding]
