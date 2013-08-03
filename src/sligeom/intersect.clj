@@ -1,5 +1,5 @@
 (ns sligeom.intersect
-  (:use [slimath core]
+  (:use [slimath core vec matrix]
         [sligeom core transform bounding]
         [clojure.math.numeric-tower :only [abs]])
   (:import [sligeom.transform Transform]
