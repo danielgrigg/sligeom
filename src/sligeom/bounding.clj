@@ -6,18 +6,17 @@
   (bounding-box [this] "Compute the AABB")
   (contains-point? [this [^double px ^double py ^double pz :as p]]))
 
-(definterface Bounding
-  (^double width [])
-  (^double height [])
-  (^double depth []))
+(defprotocol Bounding
+  (width [this])
+  (height [this])
+  (depth [this]))
 
 ; "An axis-aligned bounding box"
 (defrecord BBox [minp maxp]
-  Bounding
-  (width [this] (- (maxp 0) (minp 0)))
-  (height [ this] (- (maxp 1) (minp 1)))
-  (depth [this] (- (maxp 2) (minp 2)))
-
+Bounding
+ (width [this] (- (maxp 0) (minp 0)))
+ (height [ this] (- (maxp 1) (minp 1)))
+ (depth [this] (- (maxp 2) (minp 2)))
   Bounded
   (bounding-box [this]
     this)

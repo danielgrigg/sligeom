@@ -5,6 +5,9 @@
 (set! *unchecked-math* true)
 
 (defrecord Intersection [point normal])
+
+(defprotocol Transformable
+  (transform [this T] "Transform the object by T"))
     
 (defn point3 "Construct a point3" [^double x ^double y ^double z]
   [x y z 1.0])

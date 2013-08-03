@@ -2,7 +2,7 @@
   (:use [slimath core vec matrix]
         [sligeom core transform bounding intersect])
   (:import [sligeom.transform Transform]
-           [sligeom.bounding BBox Bounding]
+           [sligeom.bounding BBox]
            [sligeom.intersect Ray]))
 
 (set! *warn-on-reflection* true)
