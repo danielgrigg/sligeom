@@ -1,4 +1,4 @@
-(defproject sligeom "0.2.3"
+(defproject sligeom "0.2.4"
   :description "Geometric functions"
   :url "http://sliplanesoftware.com"
   :license {:name "Eclipse Public License"
@@ -6,5 +6,6 @@
   :dependencies [[org.clojure/clojure "LATEST"]
                  [slimath "LATEST"]
                  [org.clojure/math.numeric-tower "LATEST"]]
-  :profiles {:dev {:dependencies [[midje "1.5.0"]]}}
-  :jvm-opts ["-Xmx2048M"])
+  :profiles {:dev {:dependencies [[midje "1.5.0"]]
+                   :plugins [[lein-midje "3.1.0"]]}
+                   })
