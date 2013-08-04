@@ -1,14 +1,14 @@
 (ns sligeom.transform
     (:use [slimath core vec matrix]))
 
-(deftype Transform [transform inverse]
+(defrecord Transform [transform inverse]
   Object
   (toString [this]
-    (let [M (.transform this)]
+    (let [M (:transform this)]
       (str "\n" (m4str M)))))
 
 (defn ^Transform inverse "Get the inverse transform of T" [^Transform T]
-  (Transform. (.inverse T) (.transform T)))
+  (Transform. (.inverse T) (:transform T)))
 
 (defn ^Transform matrix "Create a transform from a 4x4 matrix" [M]
   (Transform. M (m4inverse M)))
@@ -20,13 +20,13 @@
   "Compose a sequence of transforms"
   ([^Transform m] m)
   ([^Transform m1 ^Transform m2]
-     (Transform. (m4mul (.transform m1) (.transform m2))
+     (Transform. (m4mul (:transform m1) (:transform m2))
                 (m4mul (.inverse m2) (.inverse m1))))
   ([^Transform x ^Transform y & xs] 
-     (loop [m (m4mul (.transform x) (.transform y)) ms xs]
+     (loop [m (m4mul (:transform x) (:transform y)) ms xs]
        (if-not (seq ms)
          (matrix m)
-         (let [^Transform m2 (.transform (first ms))]
+         (let [^Transform m2 (:transform (first ms))]
            (recur (m4mul m m2) (rest ms)))))))
 
 (defn ^Transform translate "Translation" [^double tx ^double ty ^double tz]
@@ -111,12 +111,12 @@
 (defn transform-point 
   "Transform p by T" 
   [^Transform T [^double px ^double py ^double pz _ :as p]] 
-  (m4mulv (.transform T) p))
+  (m4mulv (:transform T) p))
 
 (defn transform-vector 
   "Transform v by T" 
   [^Transform T [^double vx ^double vy ^double vz _ :as v]] 
-  (m4mulv (.transform T) v))
+  (m4mulv (:transform T) v))
 
 (defn transform-normal 
   "Transform n by T" 
