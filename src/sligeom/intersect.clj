@@ -84,7 +84,11 @@
 (defrecord Sphere [^double radius]
   RayIntersection
   (intersect [this r]
-    (intersect-sphere-ray radius r)))
+    (intersect-sphere-ray radius r))
+  Bounded
+  (bounding-box [this]
+    (bbox (point3 (- radius) (- radius) (- radius))
+          (point3 radius radius radius))))
 
 (defn sphere "Create a sphere for intersection tests" [^double r] (Sphere. r))
 
@@ -124,7 +128,10 @@
   RayIntersection
   (intersect [this r]
     (if-let [^Ray _r r]
-      (intersect-triangle-ray p0 p1 p2 _r))))
+      (intersect-triangle-ray p0 p1 p2 _r)))
+  Bounded
+  (bounding-box [this]
+    (bbox-union (bbox p0 p1) p2)))
 
 (defn triangle 
   "Create a triangle for intersection tests"
