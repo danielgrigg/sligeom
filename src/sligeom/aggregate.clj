@@ -29,16 +29,20 @@
                       (divisions-for bounds)
                       clamp-divisions)))
 
-(defn voxel-size [^Grid3 g]
+(defn voxel-size 
+  "cartesian size of a voxel in grid g"
+  [^Grid3 g]
   (v3div (bbox-size (:bounds g)) (:divisions g)))
 
-(defn point-to-voxel [^Grid3 g 
-                        [^double px ^double py ^double pz :as p]]
-  (vec (map int 
-            (v3div (v3sub p (:minp (:bounds g)))
-                   (voxel-size g)))))
+(defn point-to-voxel 
+  "get xyz voxel index corresponding to a point"
+[^Grid3 g [^double px ^double py ^double pz :as p]]
+(vec (map int 
+          (v3div (v3sub p (:minp (:bounds g))) (voxel-size g)))))
 
-(defn voxel-to-point [^Grid3 g [^long vx ^long vy ^long vz :as v]]
+(defn voxel-to-point 
+  "cartesian point corresponding to voxel index xyz"
+  [^Grid3 g [^long vx ^long vy ^long vz :as v]]
   (v3add (:minp (:bounds g))
          (v3mul v (voxel-size g))))
 
@@ -55,11 +59,14 @@
    (if (pos? z) 1 -1)])
      
 (defn- entry-point [^Grid3 g ^Ray r]
+  "compute where r enters the grid g"
   (if (contains-point? (:bounds g) (:origin r)) 
     0.0
     (intersect (:bounds g) r)))
 
-(defn grid3-seq [^Grid3 g ^Ray r]
+(defn grid3-seq
+  "sequence the cells intersecting the ray r"
+  [^Grid3 g ^Ray r]
   (if-let [enter-t (entry-point g r)]
     (let [o (ray-at r enter-t)
           d (clamp-vector (:direction r))

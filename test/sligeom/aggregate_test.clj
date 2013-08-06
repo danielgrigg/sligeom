@@ -41,4 +41,8 @@
       (grid3-seq (grid3 (bbox (point3 0 0 0) (point3 12 12 12)) 8)
                  (ray (point3 0 0 1) (vector3 2 1.5 0))) 
       => [[0 0 0] [1 0 0] [1 1 0] [2 1 0] [2 2 0] 
-          [3 2 0] [3 3 0] [4 3 0] [5 3 0] [5 4 0]])
+          [3 2 0] [3 3 0] [4 3 0] [5 3 0] [5 4 0]]
+      (grid3-seq (grid3 (bbox (point3 0 0 0) (point3 12 12 12)) 8)
+                 (ray (point3 0 20 4) (vector3 0 0 1)))
+      => nil)
+      

@@ -49,7 +49,7 @@
                                    t-max' (min t-max t2)]
                        (if-not (or (> t-min' t-max') (< t-max' 0))
                          [t-min' t-max']))
-                             (if-not (or (> (- (+ e (:width B))) 0) (< (- e) 0))
+                             (if-not (or (> (- (+ e (width B))) 0) (< (- e) 0))
                                [t-min t-max]))))]
     (if-let [[tmin-x tmax-x] (slab-intersect 0 (- infinity) infinity)]
       (if-let [[tmin-y tmax-y] (slab-intersect 1 tmin-x tmax-x)]
