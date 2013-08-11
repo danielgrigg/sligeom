@@ -20,3 +20,12 @@
       (intersect-bbox-ray (bbox (point3 -1 -1 -1) (point3 1 1 1))
                           (ray (point3 0 1.2 0) (vector3 0 0 1)))
       => nil)      
+
+(fact "`intersect-triangle-ray` intersects triangle"
+       (let [actual (intersect-triangle-ray (point3 -1 -1 1) 
+                                            (point3 1 -1 -1) 
+                                            (point3 0 1 -1)
+                                (ray (point3 0 0.0 0) (vector3 0 0 -1)))
+             ]
+         (first actual))
+      => 0.5)
