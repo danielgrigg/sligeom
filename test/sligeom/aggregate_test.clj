@@ -19,21 +19,21 @@
 
 (fact "`point-to-voxel` for a point"
       (point-to-voxel (test-grid (point3 2 3 5) (point3 7 13 9) [5 5 5])
-                        [2 3 5]) 
+                        (point3 2 3 5)) 
       => [0 0 0]
                   
       (point-to-voxel (test-grid (point3 2 3 5) (point3 7 13 9) [2 5 4])
-                        [3 8 9])
+                        (point3 3 8 9))
       => [0 2 4])
 
 (fact "`voxel-to-point`"
       (voxel-to-point (test-grid (point3 2 3 5) (point3 7 13 9) [5 5 5 1])
                         [0 0 0])
-      => [2.0 3.0 5.0]
+      => (point3 2.0 3.0 5.0)
                   
       (voxel-to-point (test-grid (point3 2 3 5) (point3 7 13 9) [2 5 4])
                         [0 2 4])
-      => [2.0 7.0 9.0])
+      => (point3 2.0 7.0 9.0))
 
 (fact "`grid-seq3` produces a grid-walk seq"
       (grid3-seq (grid3 (bbox (point3 0 0 0) (point3 12 12 12)) 8)
