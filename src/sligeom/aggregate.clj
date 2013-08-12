@@ -8,7 +8,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
 
-(defrecord Grid3 [^BBox bounds divisions])
+(defrecord Grid3 [^BBox bounds divisions voxels])
 
 (defn divisions-for 
   "compute a heuristically optimal divisions for a bounding box for nprims primitives"
@@ -27,7 +27,8 @@
 (defn grid3 [^BBox bounds ^long nprims]
   (->Grid3 bounds (-> nprims
                       (divisions-for bounds)
-                      clamp-divisions)))
+                      clamp-divisions)
+           nil))
 
 (defn voxel-size 
   "cartesian size of a voxel in grid g"
@@ -37,14 +38,28 @@
 (defn point-to-voxel 
   "get xyz voxel index corresponding to a point"
 [^Grid3 g [^double px ^double py ^double pz :as p]]
-(vec (map int 
-          (v3div (v3sub p (:minp (:bounds g))) (voxel-size g)))))
+(-> p
+    (v3sub (:minp (:bounds g)))
+    (v3div (voxel-size g))
+    v3int))
 
 (defn voxel-to-point 
   "cartesian point corresponding to voxel index xyz"
-  [^Grid3 g [^long vx ^long vy ^long vz :as v]]
-  (v3add (:minp (:bounds g))
-         (v3mul v (voxel-size g))))
+  [^Grid3 grid [^long vx ^long vy ^long vz _ :as v]]
+  (v3add (:minp (:bounds grid))
+         (v3mul v (voxel-size grid))))
+
+;;(defn voxel-index-from-point [grid-bounds divisions p]
+;(vec (map int (vdiv3 (vsub3 p (.minp grid-bounds))
+;                    (voxel-size grid-bounds divisions)
+;))))
+
+(defn- voxel-idx [^Grid3 grid p]
+  (v3sub p ))
+
+(defn bbox-voxels "Compute the voxels spanned" [^Grid3 grid ^BBox bounds]
+  (bbox (conj (point-to-voxel grid (:minp bounds)) 1)
+        (conj (point-to-voxel grid (:maxp bounds)) 1)))
 
 (defn- clamp-vector
   [[^double x ^double y ^double z]]

@@ -1,6 +1,7 @@
 (ns sligeom.intersect-test
   (:use midje.sweet
-        [sligeom core bounding intersect])
+        [slimath core]
+        [sligeom core bounding intersect transform])
   (:require [clojure.string :as str]))
 
 (fact "`ray` creates a ray"
@@ -29,3 +30,11 @@
              ]
          (first actual))
       => 0.5)
+
+(fact "`intersect` intersects objects"
+      (approx? (intersect (sphere 1.0) (ray (point3 0 0 0) (vector3 1 1 1)))
+               0.57735) 
+      => true
+      (approx? (intersect (bbox (point3 -2 -2 -2) (point3 3 3 3)) 
+                          (ray (point3 0 0 0) (vector3 1 1 1)))
+               3.0))

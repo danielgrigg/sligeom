@@ -64,7 +64,7 @@
       (intersect-bbox-ray this r))
 
   Transformable
-  (transform-object [this T]
+  (transform [this T]
     (bbox (transform-point T (:minp this)) (transform-point T (:maxp this)))))
 
 
