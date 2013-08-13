@@ -8,7 +8,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
 
-(defrecord Grid3 [^BBox bounds divisions voxels])
+(defrecord Grid [^BBox bounds divisions voxels])
 
 (defn divisions-for 
   "compute a heuristically optimal divisions for a bounding box for nprims primitives"
@@ -25,22 +25,29 @@
    (int (clamp dz 1 64))])
 
 (defn grid3 [^BBox bounds ^long nprims]
-  (->Grid3 bounds (-> nprims
-                      (divisions-for bounds)
-                      clamp-divisions)
-           nil))
+  (let [[dx dy dz :as ds] (-> nprims (divisions-for bounds) clamp-divisions)
+        vs (vec (repeat (* dx dy dz) []))] 
+    (->Grid bounds ds vs)))
 
 (defn voxel-size 
   "cartesian size of a voxel in grid g"
-  [^Grid3 g]
+  [^Grid g]
   (-> g
       :bounds
       bbox-size
       (v3div (:divisions g))))
 
+(defn voxel-idx 
+  "voxel position to flat array index"
+  [[x y z] ^Grid grid ]
+  (let [[w h _] (:divisions grid) ]  
+    (+ (* z (* w h))
+     (* y w)
+     x)))
+
 (defn point-to-voxel 
   "get xyz voxel index corresponding to a point"
-[^Grid3 g [^double px ^double py ^double pz :as p]]
+[[^double px ^double py ^double pz :as p] ^Grid g]
 (-> p
     (v3sub (:minp (:bounds g)))
     (v3div (voxel-size g))
@@ -49,42 +56,51 @@
 
 (defn voxel-to-point 
   "cartesian point corresponding to voxel index xyz"
-  [^Grid3 grid [^long vx ^long vy ^long vz _ :as v]]
+  [[^long vx ^long vy ^long vz _ :as v] ^Grid grid]
   (-> v
       (v3mul (voxel-size grid))
       (v3add (:minp (:bounds grid)))
       point3))
 
-(defn voxel-clamp 
+(defn voxel-clamp
   "Clamp a voxel-point to a grid"
-  [^Grid3 grid [^long vx ^long vy ^long vz :as v]]
-  (-> v
-      (v3clamp (:minp (:bounds grid)) (:maxp (:bounds grid)))
-      v3int))
+  [[^long vx ^long vy ^long vz :as v] ^Grid grid]
+  (v3clamp v (:minp (:bounds grid)) (:maxp (:bounds grid))))
 
 (defn voxel-bbox "Compute the voxels spanned" 
-  [^Grid3 grid ^BBox bounds]
-  (bbox (point-to-voxel grid (voxel-clamp grid (:minp bounds)))
-        (point-to-voxel grid (voxel-clamp grid (:maxp bounds)))))
+  [ ^BBox bounds ^Grid grid]
+  (bbox (-> bounds :minp (voxel-clamp grid) (point-to-voxel grid) point3)
+        (-> bounds :maxp (voxel-clamp grid) (point-to-voxel grid) point3)))
 
 (defn voxel-bbox-seq 
   "seq of voxels spanned by bounds"
-  [^Grid3 grid ^BBox bounds]
-  (let [bbox' (voxel-bbox grid bounds)
-        [ x0 y0 z0] (:minp bbox')
+  [^BBox bounds ^Grid grid]
+  (let [bbox' (voxel-bbox bounds grid)
+        [x0 y0 z0] (:minp bbox')
         [x1 y1 z1] (map inc (:maxp bbox'))]
     (for [z (range z0 z1) y (range y0 y1) x (range x0 x1)] [x y z])))
 
-(defn- ray-enters-at [^Grid3 g ^Ray r]
+(defn grid-add
+  "Add an (bounded) object to a grid."
+  [object ^Grid grid]
+  (->> (voxel-bbox-seq (bounding-box object) grid)
+       (map #(voxel-idx % grid)) 
+       (reduce (fn [coll k] (update-in coll [k] conj object)) (:voxels grid))
+       (assoc grid :voxels)))
+
+;; (reduce (fn [coll x] (grid-add x coll)) (test-grid) 
+;; [ (bbox (point3 -2 -1 0) (point3 2 3 4)) (sphere 2.0) (sphere 6.0)])
+
+(defn- ray-enters-at [^Ray r ^Grid g]
   "compute where r enters the grid g"
   (if (contains-point? (:bounds g) (:origin r)) 
     0.0
     (intersect (:bounds g) r)))
 
-(defn grid3-seq
+(defn grid-seq
   "sequence the cells intersecting the ray r"
-  [^Grid3 grid ^Ray r]
-  (if-let [enter-t (ray-enters-at grid r)]
+  [^Grid grid ^Ray r]
+  (if-let [enter-t (ray-enters-at r grid)]
     (let [o (ray-at r enter-t)
           d (point3 (v3clamp (:direction r)))
           [nx ny nz :as n] (:divisions grid)
