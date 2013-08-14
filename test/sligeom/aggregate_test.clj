@@ -3,7 +3,7 @@
         [sligeom core bounding intersect aggregate]))
 
 (defn test-grid [minp maxp d]
-  (->Grid3 (bbox minp maxp) d nil))
+  (->Grid (bbox minp maxp) d nil))
 
 (fact "`divisions-for` computes an empirical set of divisions"
       (divisions-for 8 (bbox (point3 2 3 4) (point3 4 6 8)))
