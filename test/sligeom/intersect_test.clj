@@ -1,8 +1,7 @@
 (ns sligeom.intersect-test
   (:use midje.sweet
         [slimath core]
-        [sligeom core bounding intersect transform])
-  (:require [clojure.string :as str]))
+        [sligeom core bounding transform intersect]))
 
 (fact "`ray` creates a ray"
       (ray (point3 -1.1 3.3 2.2) (vector3 3.3 5.5 4.4)) 
