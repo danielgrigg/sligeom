@@ -24,7 +24,7 @@
    (int (clamp dy 1 64))
    (int (clamp dz 1 64))])
 
-(defn grid3 [^BBox bounds ^long nprims]
+(defn grid [^BBox bounds ^long nprims]
   (let [[dx dy dz :as ds] (-> nprims (divisions-for bounds) clamp-divisions)
         vs (vec (repeat (* dx dy dz) []))] 
     (->Grid bounds ds vs)))
@@ -107,11 +107,11 @@
           [sx sy sz :as s] (v3sign (:direction r))
 
           v0 (-> (v3sub n (point3 1 1 1))
-                 (v3min (point-to-voxel grid o)))
+                 (v3min (point-to-voxel o grid )))
 
           v1 (v3add v0 (v3max s [0 0 0]))
 
-          tmax (-> (voxel-to-point grid v1)
+          tmax (-> (voxel-to-point v1 grid)
                    (v3sub o)
                    (v3div d)
                    v3abs)
