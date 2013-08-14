@@ -102,7 +102,7 @@
   [^Grid grid ^Ray r]
   (if-let [enter-t (ray-enters-at r grid)]
     (let [o (ray-at r enter-t)
-          d (point3 (v3clamp (:direction r)))
+          d (point3 (v3max (:direction r) (vector3 eps eps eps)))
           [nx ny nz :as n] (:divisions grid)
           [sx sy sz :as s] (v3sign (:direction r))
 
