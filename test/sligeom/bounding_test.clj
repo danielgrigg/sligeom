@@ -17,8 +17,8 @@
       (bbox-size (bbox (point3 2 3 5) (point3 7 13 9)))
       => (vector3 5 10 4))
 
-(fact "`bbox-union` bbox unioned with point3"
-      (bbox-union (bbox (point3 2 3 5) (point3 7 13 9))
+(fact "`union-point` bbox unioned with point3"
+      (union-point (bbox (point3 2 3 5) (point3 7 13 9))
                   (point3 35 -21 23))
       => (bbox (point3 2 -21 5) (point3 35 13 23)))
 

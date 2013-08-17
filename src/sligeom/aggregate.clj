@@ -80,9 +80,9 @@
         [x1 y1 z1] (map inc (:maxp bbox'))]
     (for [z (range z0 z1) y (range y0 y1) x (range x0 x1)] [x y z])))
 
-(defn grid-add
+(defn grid-conj
   "Add an (bounded) object to a grid."
-  [object ^Grid grid]
+  [^Grid grid object ] 
   (->> (voxel-bbox-seq (bounding-box object) grid)
        (map #(voxel-idx % grid)) 
        (reduce (fn [coll k] (update-in coll [k] conj object)) (:voxels grid))

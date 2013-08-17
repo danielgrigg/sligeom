@@ -32,15 +32,22 @@ Bounding
             (point3 infinity infinity infinity)))
   
  ([[x0 y0 z0 w0 :as p0] [x1 y1 z1 w1 :as p1]]
-     (BBox. (v4min p0 p1) (v4max p0 p1))))
+     (BBox. (v4min p0 p1) (v4max p0 p1)))
+ ([xs]
+    (->> xs (map bounding-box) (reduce union))))
 
 (defn bbox-centre "centre of b" [^BBox b]
   (v4mul (v4add (.minp b) (.maxp b)) [0.5 0.5 0.5 0.5] ))
 
 (defn bbox-size "size of b" [^BBox b] (vector3 (.width b) (.height b) (.depth b)))
 
-(defn bbox-union "union of bbox with point" [^BBox b [^double x ^double y ^double z :as p]]
+(defn union-point "union of bbox with point" [^BBox b [^double x ^double y ^double z :as p]]
   (BBox. (v4min (.minp b) p) (v4max (.maxp b) p)))
+
+(defn union "Union two geometric objects" [^BBox a ^BBox b]
+  (-> a
+      (union-point (:minp b)) 
+      (union-point (:maxp b))))
 
 (defn longest [^BBox b]
   (max (.width b) (.height b) (.depth b)))

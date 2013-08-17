@@ -131,7 +131,7 @@
       (intersect-triangle-ray p0 p1 p2 _r)))
   Bounded
   (bounding-box [this]
-    (bbox-union (bbox p0 p1) p2)))
+    (union-point (bbox p0 p1) p2)))
 
 (defn triangle 
   "Create a triangle for intersection tests"
