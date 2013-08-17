@@ -8,7 +8,10 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
 
-(defrecord Grid [^BBox bounds divisions voxels])
+(defrecord Grid [^BBox bounds divisions voxels]
+  Bounded
+  (bounding-box [this]
+    bounds))
 
 (defn divisions-for 
   "compute a heuristically optimal divisions for a bounding box for nprims primitives"
@@ -87,9 +90,6 @@
        (map #(voxel-idx % grid)) 
        (reduce (fn [coll k] (update-in coll [k] conj object)) (:voxels grid))
        (assoc grid :voxels)))
-
-;; (reduce (fn [coll x] (grid-add x coll)) (test-grid) 
-;; [ (bbox (point3 -2 -1 0) (point3 2 3 4)) (sphere 2.0) (sphere 6.0)])
 
 (defn- ray-enters-at [^Ray r ^Grid g]
   "compute where r enters the grid g"

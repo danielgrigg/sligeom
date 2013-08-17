@@ -26,6 +26,7 @@ Bounding
         (not (or (< px x0) (< py y0) (< pz z0)
                  (> px x1) (> py y1) (> pz z1))))))
 
+(declare union)
 (defn bbox "Construct a BBox"
   ([] 
      (BBox. (point3 (- infinity) (- infinity) (- infinity))
