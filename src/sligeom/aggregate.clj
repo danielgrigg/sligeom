@@ -97,30 +97,24 @@
     0.0
     (intersect (:bounds g) r)))
 
+(defn clamp-to-eps [v]
+  (v3mul (v3sign v)
+         (v3max (v3abs v) (vector3 eps eps eps))))
+
 (defn grid-seq
   "sequence the cells intersecting the ray r"
   [^Grid grid ^Ray r]
   (if-let [enter-t (ray-enters-at r grid)]
     (let [o (ray-at r enter-t)
-          d (point3 (v3max (:direction r) (vector3 eps eps eps)))
+          d (vector3 (clamp-to-eps (:direction r)))
           [nx ny nz :as n] (:divisions grid)
           [sx sy sz :as s] (v3sign (:direction r))
-
-          v0 (-> (v3sub n (point3 1 1 1))
-                 (v3min (point-to-voxel o grid )))
-
-          v1 (v3add v0 (v3max s [0 0 0]))
-
-          tmax (-> (voxel-to-point v1 grid)
-                   (v3sub o)
-                   (v3div d)
-                   v3abs)
           [tdx tdy tdz :as td] (-> (voxel-size grid)
                                    (v3div d)
                                    v3abs)
           
           step-fx (fn step [[^long x ^long y ^long z] 
-                            [^double tmx ^double tmy ^double tmz]]
+                            [^double tmx ^double tmy ^double tmz :as tm]]
                     (if (and (< x nx) (>= x 0)
                              (< y ny) (>= y 0)
                              (< z nz) (>= z 0)) 
@@ -136,5 +130,16 @@
                                  (step [x (+ y sy) z]
                                        [tmx (+ tmy tdy) tmz])
                                  (step [x y (+ z sz)]
-                                       [tmx tmy (+ tmz tdz)])))))))]
-  (step-fx v0 tmax))))
+                                       [tmx tmy (+ tmz tdz)])))))))
+          
+          v0 (-> (v3sub n (point3 1 1 1))
+                 (v3min (point-to-voxel o grid ))
+                 v3int)
+
+          tmax (-> (v3add v0 (v3max s [0 0 0]))
+                   v3int
+                   (voxel-to-point grid)
+                   (v3sub o)
+                   (v3div d)
+                   v3abs)]
+      (step-fx v0 tmax))))
