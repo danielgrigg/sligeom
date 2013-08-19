@@ -50,5 +50,12 @@ Bounding
       (union-point (:minp b)) 
       (union-point (:maxp b))))
 
+(defn bbox-clamp "clamp p to bounds" [p ^BBox bounds]
+  (-> (v3clamp p (:minp bounds) (:maxp bounds)) point3))
+
+(defn intersection "intersection of two geometric objects" 
+  [^BBox a ^BBox b]
+  (bbox (bbox-clamp (:minp a) b) (bbox-clamp (:maxp a) b)))
+
 (defn longest [^BBox b]
   (max (.width b) (.height b) (.depth b)))

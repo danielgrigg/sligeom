@@ -20,11 +20,11 @@
 (fact "`point-to-voxel` for a point"
       (point-to-voxel (point3 2 3 5)
                       (test-grid (point3 2 3 5) (point3 7 13 9) [5 5 5])) 
-      => [0 0 0]
+      => (point3 0 0 0)
                   
       (point-to-voxel (point3 3 8 9) 
                       (test-grid (point3 2 3 5) (point3 7 13 9) [2 5 4]))
-      => [0 2 4])
+      => [0.4 2.5 4.0 1.0])
 
 (fact "`voxel-to-point`"
       (voxel-to-point (point3 0 0 0)
@@ -44,3 +44,6 @@
                  (ray (point3 0 20 4) (vector3 0 0 1)))
       => nil)
       
+(fact "`voxel-bbox` computes spanned voxels"
+      (voxel-bbox (bbox (point3 0 0 0) (point3 0.2 0.2 0.2)) (grid (bbox (point3 -2 -2 -1) (point3 2 2 1)) 2))
+      => (bbox [1 1 0 1] [2 2 1 1]))
