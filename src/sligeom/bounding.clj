@@ -53,6 +53,11 @@ Bounding
 (defn bbox-clamp "clamp p to bounds" [p ^BBox bounds]
   (-> (v3clamp p (:minp bounds) (:maxp bounds)) point3))
 
+(defn bbox-border 
+  "add a border to a bounding box" [[x y z] ^BBox bounds]
+  (bbox (v4sub (:minp bounds) (vector3 x y z))
+        (v4add (:maxp bounds) (vector3 x y z))))
+
 (defn intersection "intersection of two geometric objects" 
   [^BBox a ^BBox b]
   (bbox (bbox-clamp (:minp a) b) (bbox-clamp (:maxp a) b)))
